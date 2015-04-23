@@ -43,8 +43,8 @@ gtcgctactaccgattgaacgttttagtgaggtatttggactgggccttgggaggattcgttctcccatgttgctcggga
 gtcgctactaccgattgaacgttttagtgaggtcctcggactgtgatcctggctggttactcagcctgggttgcgggaagacgaccaaactgtagcgtttagaggaagtaaaagtcgtaacaaggtttcc
 ```
 
-Abundance values (after the "_") will be reported in the
-results. Abundance annotations in uclust-style ";size=" are also
+Abundance values (after the `_`) will be reported in the
+results. Abundance annotations in uclust-style `;size=` are also
 accepted.
 
 ### References ###
@@ -96,4 +96,4 @@ The third line shows what happens when there is a problem with the
 reference database. Several identical references are assigned to
 different branches of the Dinophyceae, logically **stampa** assigned
 the sequence to the last common ancestor (taxa names were replaced by
-a star "*").
+a star `*`).
