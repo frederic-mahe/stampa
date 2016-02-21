@@ -115,10 +115,15 @@ The first step is to summarize stampa results: target a specific taxa
 (Metazoa fo instance), group by similarity value (column #3) and count
 reads (column #2):
 
-```
-TABLE="18S_samples_stampa.table" grep "Metazoa" "${TABLE}" | \ awk
-'BEGIN {FS = "\t"} {stampa[$3] += $2 } END { for (similarity in
-stampa) { print similarity, stampa[similarity] } }' | sort -k1,1n >
+```sh
+TABLE="18S_samples_stampa.table"
+
+grep "Metazoa" "${TABLE}" | \
+awk 'BEGIN {FS = "\t"}
+     {stampa[$3] += $2}
+     END {for (similarity in stampa) {
+              print similarity, stampa[similarity]
+         }}' | sort -k1,1n >
 "${TABLE/.table/.data}"
 ```
 
@@ -126,7 +131,7 @@ Then, use the data to produce a plot with R and ggplot (the above step
 can be easily performed in R with the packages tidyr and dplyr, if you
 are more familiar with them):
 
-```
+```R
 library(ggplot2)
 library(scales)
 
@@ -158,3 +163,13 @@ ggsave(file = output, width = 8 , height = 5)
 
 quit(save = "no")
 ```
+
+Here an example of stampa plot computed from the publically available
+TARA dataset (marine diversity of unicellular eukaryotes):
+
+![](https://github.com/frederic-mahe/stampa/blob/master/TARA_V9_stampa_plot_example.svg)
+
+Most environmental sequences are close to known references, with the
+exception of a few interesting peaks around 83-85% similarity. Stampa
+plots indicate where database curation efforts or additional
+biological observations are needed the most.
