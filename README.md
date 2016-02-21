@@ -167,7 +167,7 @@ quit(save = "no")
 Here an example of stampa plot computed from the publically available
 TARA dataset (marine diversity of unicellular eukaryotes):
 
-![](https://github.com/frederic-mahe/stampa/blob/master/TARA_V9_stampa_plot_example.svg)
+![](https://github.com/frederic-mahe/stampa/blob/master/TARA_V9_stampa_plot_example.png)
 
 Most environmental sequences are close to known references, with the
 exception of a few interesting peaks around 83-85% similarity. Stampa
