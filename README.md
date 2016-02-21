@@ -97,3 +97,64 @@ reference database. Several identical references are assigned to
 different branches of the Dinophyceae, logically **stampa** assigned
 the sequence to the last common ancestor (taxa names were replaced by
 a star `*`).
+
+### Stampa plots ###
+
+Building on taxonomic assignment results, it is straightforward to
+produce "stampa plots". These informative plots represent the
+distribution of maximum percentage of similarity to reference
+sequences. Ideally, most environmental sequences should be close to
+known references and stand on the right side of the plot (close to
+100% similarity).
+
+Stampa plots are graphical evaluations of the coverage of
+environmental sequences by reference sequences, allowing to assess
+immediately the numerical importance of novel sequences.
+
+The first step is to summarize stampa results: target a specific taxa
+(Metazoa fo instance), group by similarity value (column #3) and count
+reads (column #2):
+
+```
+TABLE="18S_samples_stampa.table" grep "Metazoa" "${TABLE}" | \ awk
+'BEGIN {FS = "\t"} {stampa[$3] += $2 } END { for (similarity in
+stampa) { print similarity, stampa[similarity] } }' | sort -k1,1n >
+"${TABLE/.table/.data}"
+```
+
+Then, use the data to produce a plot with R and ggplot (the above step
+can be easily performed in R with the packages tidyr and dplyr, if you
+are more familiar with them):
+
+```
+library(ggplot2)
+library(scales)
+
+setwd("~/mydata/")
+input <- "18S_samples_stampa.data"
+TITLE <- "Metazoa"
+
+## Load the data
+d <- read.table(input, sep = " ", dec = ".")
+colnames(d) <- c("identities", "abundance")
+d$identities <- d$identities / 100
+
+## Get the max abundance value
+y_max <- max(d$abundance)
+
+## Plot
+ggplot(d, aes(x = identities, y = abundance)) +
+    geom_segment(aes(xend = identities, yend = 0), colour = "darkred", size = 1) +
+    scale_x_continuous(labels = percent, limits = c(0.5, 1)) +
+    scale_y_continuous(labels = comma) +
+    xlab("max % of similarity to reference database") +
+    ylab("number of reads") +
+    annotate("text", x = 0.50, y = y_max * 0.9,
+             hjust = 0, colour = "grey", size = 8, label = TITLE)
+
+## Output to PDF
+output <- gsub(".data", ".pdf", input, fixed = TRUE)
+ggsave(file = output, width = 8 , height = 5)
+
+quit(save = "no")
+```
