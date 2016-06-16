@@ -40,7 +40,7 @@ def main():
     """Parse stampa results and compute last common ancestor."""
 
     # Parse command line options and change working directory
-    directory = sys.argv[1]
+    directory = os.path.abspath(sys.argv[1])
     if not os.path.exists(directory):
         sys.exit("ERROR: directory %s not found!" % directory)
     os.chdir(directory)
