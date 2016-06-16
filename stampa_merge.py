@@ -60,11 +60,11 @@ def main():
                 for line in input_file:
                     amplicon, identity, hit = line.strip().split("\t")
                     amplicon, abundance = amplicon.split("_")
-                    if hit != "*":
-                        accession, taxonomy = hit.split(" ", 1)
-                    else:  # no hit
+                    if len(hit.split(" ", 1)) == 1:
                         accession = taxonomy = "No_hit"
-                    taxonomy = taxonomy.split("|")
+                    else:
+                        accession, taxonomy = hit.split(" ", 1)
+                        taxonomy = taxonomy.split("|")
                     if previous[0] == amplicon:
                         taxonomies.append(taxonomy)
                         accessions.append(accession)
