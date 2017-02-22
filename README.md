@@ -50,10 +50,8 @@ accepted.
 ### References ###
 
 Reference datasets need to be cut using the same primers than the one
-used to produce the amplicons. For eucaryotes, the website
-[PR2](http://ssu-rrna.org/) provides datasets trimmed using primer
-pairs for popular marker regions (rRNA 18S V4 and rRNA 18S V9). The
-reference sequences should be formatted as such:
+used to produce the amplicons. The reference sequences should be
+formatted as such ">accession[space]taxonomy":
 
 ```
 >AM490275.1.2082_U Eukaryota|Opisthokonta|Metazoa|Arthropoda|Crustacea|Branchiopoda|Bosmina|Bosmina+longirostris
@@ -68,6 +66,37 @@ The space separating the accession field and the taxonomic path is
 important. The field separator `|` (pipe) for the taxonomic levels is
 important too. The number of taxonomic levels, using DNA or RNA, or
 the case of the DNA sequence are not important.
+
+Here is how I trim and format the [SILVA rRNA
+database](https://www.arb-silva.de/) using the primers published by
+[Parada et al. (2016)](https://www.ncbi.nlm.nih.gov/pubmed/26271760):
+
+```sh
+RELEASE=128
+URL="https://www.arb-silva.de/fileadmin/silva_databases/release_${RELEASE}/Exports"
+FILE="SILVA_${RELEASE}_SSURef_tax_silva.fasta.gz"
+
+# Download and check
+wget -c ${URL}/${FILE}{,.md5} && md5sum -c ${FILE}.md5
+
+# Define variables and output files
+INPUT="SILVA_${RELEASE}_SSURef_tax_silva.fasta.gz"
+OUTPUT="${INPUT/.fasta.gz/_515F_926R.fasta}"
+LOG="${INPUT/.fasta.gz/_515F_926R.log}"
+PRIMER_F="GTGYCAGCMGCCGCGGTAA"
+PRIMER_R="AAACTYAAAKRAATTGRCGG"
+MIN_LENGTH=32
+MIN_F=$(( ${#PRIMER_F} * 2 / 3 ))
+MIN_R=$(( ${#PRIMER_R} * 2 / 3 ))
+CUTADAPT="cutadapt --discard-untrimmed --minimum-length ${MIN_LENGTH}"
+
+# Trim forward & reverse primers, format
+zcat "${INPUT}" | sed '/^>/ ! s/U/T/g' | \
+     ${CUTADAPT} -g "${PRIMER_F}" -O "${MIN_F}" - 2> "${LOG}" | \
+     ${CUTADAPT} -a "${PRIMER_R}" -O "${MIN_F}" - 2>> "${LOG}" | \
+     sed '/^>/ s/;/|/g ; /^>/ s/ /_/g ; /^>/ s/_/ /1' > "${OUTPUT}"
+```
+
 
 ### Third-party tools ###
 
