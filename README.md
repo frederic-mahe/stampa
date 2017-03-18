@@ -97,6 +97,40 @@ zcat "${INPUT}" | sed '/^>/ ! s/U/T/g' | \
      sed '/^>/ s/;/|/g ; /^>/ s/ /_/g ; /^>/ s/_/ /1' > "${OUTPUT}"
 ```
 
+And here is how I trim and format the [BoLD Cytochrome oxidase subunit
+1 (COI) database](http://www.barcodinglife.org/index.php/datarelease)
+using the mlCOIintF-HCO2198 primers:
+
+```sh
+# Define variables and output file
+URL="http://www.barcodinglife.org/data/datarelease/NewPackages"
+VERSION="6.50"
+TARGET="iBOL_phase_${VERSION}_COI.tsv.zip"
+INPUT=${TARGET/.zip/}
+PRIMER_F="GGWACWGGWTGAACWGTWTAYCCYCC"
+PRIMER_R="TGATTTTTTGGTCACCCTGAAGTTTA"
+PRIMER_NAMES="mlCOIintF_HCO2198"
+FINAL_FASTA="bold_${PRIMER_NAMES}_${VERSION}.fasta"
+LOG=${FINAL_FASTA/.fasta/.log}
+CUTADAPT=$(which cutadapt)
+
+# Download and clean
+[[ -f ${TARGET} ]] || wget ${URL}/${TARGET}
+[[ -e ${INPUT} ]] || unzip ${TARGET}
+
+# Prepare fasta file, modify headers and trim primers
+awk 'BEGIN {FS = "\t"}
+     {if (NR > 1) {
+          print ">"$5"@"$9"|"$10"|"$11"|"$12"|"$13"|"$14"|"$15"\n"$31
+         }
+     }' ${INPUT} | \
+    sed -r 's/\|\|/|missing|/g
+            s/ [:[:alnum:]]+$//
+            s/\|\|/|missing|/
+            s/ /_/ ; s/@/ /' | \
+    ${CUTADAPT} --discard-untrimmed -g "${PRIMER_F}" - 2> "${LOG}" | \
+    ${CUTADAPT} -a "${PRIMER_R}" - 2>> "${LOG}" > "${FINAL_FASTA}"
+```
 
 ### Third-party tools ###
 
