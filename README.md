@@ -72,7 +72,7 @@ database](https://www.arb-silva.de/) using the primers published by
 [Parada et al. (2016)](https://www.ncbi.nlm.nih.gov/pubmed/26271760):
 
 ```sh
-RELEASE=128
+RELEASE=132
 URL="https://www.arb-silva.de/fileadmin/silva_databases/release_${RELEASE}/Exports"
 FILE="SILVA_${RELEASE}_SSURef_tax_silva.fasta.gz"
 
