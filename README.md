@@ -83,7 +83,8 @@ wget -c ${URL}/${INPUT}{,.md5} && md5sum -c ${INPUT}.md5
 OUTPUT="${INPUT/.fasta.gz/_515F_926R.fasta}"
 LOG="${INPUT/.fasta.gz/_515F_926R.log}"
 PRIMER_F="GTGYCAGCMGCCGCGGTAA"
-PRIMER_R="AAACTYAAAKRAATTGRCGG"
+PRIMER_R="CCGYCAATTYMTTTRAGTTT"
+ANTI_PRIMER_R="AAACTYAAAKRAATTGRCGG"
 MIN_LENGTH=32
 MIN_F=$(( ${#PRIMER_F} * 2 / 3 ))
 MIN_R=$(( ${#PRIMER_R} * 2 / 3 ))
@@ -92,7 +93,7 @@ CUTADAPT="cutadapt --discard-untrimmed --minimum-length ${MIN_LENGTH}"
 # Trim forward & reverse primers, format
 zcat "${INPUT}" | sed '/^>/ ! s/U/T/g' | \
      ${CUTADAPT} -g "${PRIMER_F}" -O "${MIN_F}" - 2> "${LOG}" | \
-     ${CUTADAPT} -a "${PRIMER_R}" -O "${MIN_F}" - 2>> "${LOG}" | \
+     ${CUTADAPT} -a "${ANTI_PRIMER_R}" -O "${MIN_F}" - 2>> "${LOG}" | \
      sed '/^>/ s/;/|/g ; /^>/ s/ /_/g ; /^>/ s/_/ /1' > "${OUTPUT}"
 ```
 
