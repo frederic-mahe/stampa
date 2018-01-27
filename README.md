@@ -74,13 +74,12 @@ database](https://www.arb-silva.de/) using the primers published by
 ```sh
 RELEASE=132
 URL="https://www.arb-silva.de/fileadmin/silva_databases/release_${RELEASE}/Exports"
-FILE="SILVA_${RELEASE}_SSURef_tax_silva.fasta.gz"
+INPUT="SILVA_${RELEASE}_SSURef_Nr99_tax_silva.fasta.gz"
 
 # Download and check
-wget -c ${URL}/${FILE}{,.md5} && md5sum -c ${FILE}.md5
+wget -c ${URL}/${INPUT}{,.md5} && md5sum -c ${INPUT}.md5
 
 # Define variables and output files
-INPUT="SILVA_${RELEASE}_SSURef_tax_silva.fasta.gz"
 OUTPUT="${INPUT/.fasta.gz/_515F_926R.fasta}"
 LOG="${INPUT/.fasta.gz/_515F_926R.log}"
 PRIMER_F="GTGYCAGCMGCCGCGGTAA"
