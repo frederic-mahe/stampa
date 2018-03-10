@@ -21,7 +21,7 @@ Outline:
 The **stampa** scripts are made public for transparency. These scripts
 are not generic and are very unlikely to run out-of-the-box in a new
 environment (see for instance [#issue
-1](https://github.com/frederic-mahe/stampa/issues/1). However,
+1](https://github.com/frederic-mahe/stampa/issues/1)). However,
 experience has shown that with a reasonable amount of modifications
 (and patience), **stampa** can be successfully replicated.
 
