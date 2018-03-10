@@ -67,6 +67,36 @@ important. The field separator `|` (pipe) for the taxonomic levels is
 important too. The number of taxonomic levels, using DNA or RNA, or
 the case of the DNA sequence are not important.
 
+Here is how I trim and format the [PR2
+database](https://github.com/vaulot/pr2_database) using the primers
+published by [Stoeck et
+al. (2010)](http://onlinelibrary.wiley.com/doi/10.1111/j.1365-294X.2009.04480.x/abstract):
+
+```sh
+# download the UTAX version and extract the V4 region
+VERSION="4.10.0"
+URL="https://github.com/vaulot/pr2_database/releases/download"
+SOURCE="pr2_version_${VERSION}_UTAX.fasta"
+wget "${URL}/${VERSION}/${SOURCE}.gz"
+gunzip -k ${SOURCE}.gz
+
+PRIMER_F="CCAGCASCYGCGGTAATTCC"
+PRIMER_R="TYRATCAAGAACGAAAGT"
+OUTPUT="${SOURCE/_UTAX*/}_${PRIMER_F}_${PRIMER_R}.fas"
+LOG="${OUTPUT/.fas/.log}"
+MIN_LENGTH=32
+MIN_F=$(( ${#PRIMER_F} * 2 / 3 ))
+MIN_R=$(( ${#PRIMER_R} * 2 / 3 ))
+CUTADAPT="$(which cutadapt) --discard-untrimmed --minimum-length ${MIN_LENGTH}"
+
+dos2unix < "${SOURCE}" | \
+    sed '/^>/ s/;tax=k:/ /
+         /^>/ s/,[dpcofgs]:/|/g
+         /^>/ ! s/U/T/g' | \
+    ${CUTADAPT} -g "${PRIMER_F}" -O "${MIN_F}" - 2> "${LOG}" | \
+    ${CUTADAPT} -a "${PRIMER_R}" -O "${MIN_F}" - 2>> "${LOG}" > "${OUTPUT}"
+```
+
 Here is how I trim and format the [SILVA rRNA
 database](https://www.arb-silva.de/) using the primers published by
 [Parada et al. (2016)](https://www.ncbi.nlm.nih.gov/pubmed/26271760):
