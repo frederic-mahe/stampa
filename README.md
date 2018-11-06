@@ -95,7 +95,7 @@ dos2unix < "${SOURCE}" | \
          /^>/ s/,[dpcofgs]:/|/g
          /^>/ ! s/U/T/g' | \
     ${CUTADAPT} -g "${PRIMER_F}" -O "${MIN_F}" - 2> "${LOG}" | \
-    ${CUTADAPT} -a "${PRIMER_R}" -O "${MIN_F}" - 2>> "${LOG}" > "${OUTPUT}"
+    ${CUTADAPT} -a "${PRIMER_R}" -O "${MIN_R}" - 2>> "${LOG}" > "${OUTPUT}"
 ```
 
 Here is how I trim and format the [SILVA rRNA
@@ -124,7 +124,7 @@ CUTADAPT="cutadapt --discard-untrimmed --minimum-length ${MIN_LENGTH}"
 # Trim forward & reverse primers, format
 zcat "${INPUT}" | sed '/^>/ ! s/U/T/g' | \
      ${CUTADAPT} -g "${PRIMER_F}" -O "${MIN_F}" - 2> "${LOG}" | \
-     ${CUTADAPT} -a "${ANTI_PRIMER_R}" -O "${MIN_F}" - 2>> "${LOG}" | \
+     ${CUTADAPT} -a "${ANTI_PRIMER_R}" -O "${MIN_R}" - 2>> "${LOG}" | \
      sed '/^>/ s/;/|/g ; /^>/ s/ /_/g ; /^>/ s/_/ /1' > "${OUTPUT}"
 ```
 
