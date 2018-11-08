@@ -14,7 +14,7 @@ MAXREJECTS=32
 THREADS=16
 NULL="/dev/null"
 
-# Dereplicate (vsearch)
+# compare environmental sequences to known reference sequences
 "${VSEARCH}" --usearch_global "${QUERIES}" \
     --threads "${THREADS}" \
     --dbmask none \
