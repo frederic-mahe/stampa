@@ -1,30 +1,28 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
     Parse stampa results and compute last common ancestor.
 """
 
-from __future__ import print_function
-
-__author__ = "Frédéric Mahé <mahe@rhrk.uni-kl.fr>"
-__date__ = "2015/02/16"
-__version__ = "$Revision: 1.0"
+__author__ = "Frédéric Mahé <frederic.mahe@cirad.fr>"
+__date__ = "2019/09/20"
+__version__ = "$Revision: 2.0"
 
 import os
 import sys
 
-#*****************************************************************************#
+
+# *************************************************************************** #
 #                                                                             #
 #                                  Functions                                  #
 #                                                                             #
-#*****************************************************************************#
-
+# *************************************************************************** #
 
 def last_common_ancestor(taxonomies):
     """Compute last common ancestor"""
     lca = list()
     if len(taxonomies) > 1:
-        zipped = zip(*taxonomies)
+        zipped = list(zip(*taxonomies))
         for level in zipped:
             if len(set(level)) > 1:
                 level = "*"
@@ -32,7 +30,11 @@ def last_common_ancestor(taxonomies):
                 level = level[0]
             lca.append(level)
     else:  # only one top hit
-        lca = taxonomies[0]
+        try:
+            lca = taxonomies[0]
+        except IndexError:
+            print(taxonomies, file=sys.stderr)
+            raise
     return lca
 
 
@@ -40,7 +42,7 @@ def main():
     """Parse stampa results and compute last common ancestor."""
 
     # Parse command line options and change working directory
-    directory = os.path.abspath(sys.argv[1])
+    directory = sys.argv[1]
     if not os.path.exists(directory):
         sys.exit("ERROR: directory %s not found!" % directory)
     os.chdir(directory)
@@ -49,22 +51,34 @@ def main():
     files = [f for f in os.listdir(directory) if f.startswith("hits.")]
     files.sort()
 
+    # detect empty files (something went wrong upstream)
+    empty_files = [f for f in files if not os.stat(f).st_size]
+    if empty_files:
+        print("ERROR: empty hits file detected", file=sys.stderr)
+        for f in empty_files:
+            print(f, file=sys.stderr)
+        sys.exit(1)
+
     # Parse files
     for input_file in files:
         previous = ("", "", "")
         taxonomies = list()
         accessions = list()
         output_file = input_file.replace("hits.", "results.")
-        with open(input_file, "rb") as input_file:
-            with open(output_file, "wb") as output_file:
+        with open(input_file, "r") as input_file:
+            with open(output_file, "w") as output_file:
                 for line in input_file:
                     amplicon, identity, hit = line.strip().split("\t")
                     amplicon, abundance = amplicon.split("_")
-                    if len(hit.split(" ", 1)) == 1:
+                    if hit != "*":
+                        try:
+                            accession, taxonomy = hit.split(" ", 1)
+                        except ValueError:  # something's wrong
+                            print(amplicon, identity, hit, file=sys.stderr)
+                            raise
+                    else:  # no hit
                         accession = taxonomy = "No_hit"
-                    else:
-                        accession, taxonomy = hit.split(" ", 1)
-                        taxonomy = taxonomy.split("|")
+                    taxonomy = taxonomy.split("|")
                     if previous[0] == amplicon:
                         taxonomies.append(taxonomy)
                         accessions.append(accession)
@@ -90,11 +104,11 @@ def main():
     return
 
 
-#*****************************************************************************#
+# *************************************************************************** #
 #                                                                             #
 #                                     Body                                    #
 #                                                                             #
-#*****************************************************************************#
+# *************************************************************************** #
 
 if __name__ == '__main__':
 

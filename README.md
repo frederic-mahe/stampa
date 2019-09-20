@@ -166,7 +166,7 @@ awk 'BEGIN {FS = "\t"}
 ### Third-party tools ###
 
 **stampa** was tested with:
-* python 2.7 (or later versions, not tested with python 3),
+* python 3.5 (or later versions),
 * vsearch 1.1.13 (or later versions),
 * bash 4 (or later versions),
 * *(probably other hidden dependencies)*

@@ -9,15 +9,13 @@ FINAL_FILE=${PWD/*stampa_/}
 FINAL_FILE=${FINAL_FILE/\//}.results
 
 cd "${PWD}"
-module load python/latest-2.7
 
-python "${SCRIPT}" "${PWD}"
+python3 "${SCRIPT}" "${PWD}"
 
 for f in results.* ; do
     sort -k2,2nr -k1,1d ${f}
 done > ../${FINAL_FILE}
 
 rm -f results.*
-module unload python/latest-2.7
 
 exit 0
