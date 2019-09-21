@@ -4,7 +4,7 @@
 # results in a final file.
 
 PWD="${1}"
-SCRIPT="stampa_merge.py"
+SCRIPT="../stampa_merge.py"
 FINAL_FILE=${PWD/*stampa_/}
 FINAL_FILE=${FINAL_FILE/\//}.results
 
