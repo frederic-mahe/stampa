@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Mahé"
+  given-names: "Frédéric"
+  orcid: "https://orcid.org/0000-0002-2808-0984"
+title: "stampa: sequence taxonomic assignment using massive pairwise alignments"
+version: 2.0.0
+date-released: 2019-09-21
+url: "https://github.com/frederic-mahe/stampa"
